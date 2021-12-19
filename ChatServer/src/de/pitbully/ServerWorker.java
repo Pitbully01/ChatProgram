@@ -56,6 +56,7 @@ public class ServerWorker extends Thread{
     }
 
     private void handleLogoff() throws IOException {
+        server.removeWorker(this);
         List<ServerWorker> workerList = server.getWorkerList();
         String onlineMsg = "offline " + login + System.lineSeparator();
         for(ServerWorker worker : workerList) {
