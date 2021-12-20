@@ -15,3 +15,5 @@ Commands:
 
     login <user> <password>
     logoff
+
+    msg <user> <body>
