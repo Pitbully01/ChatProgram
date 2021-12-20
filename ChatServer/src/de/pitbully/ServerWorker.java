@@ -26,7 +26,9 @@ public class ServerWorker extends Thread{
         try {
             handleClientSocket();
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e.getMessage().equalsIgnoreCase("Connection reset")) {
+                System.out.println("Client disconnected... Wating for another Connection");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
