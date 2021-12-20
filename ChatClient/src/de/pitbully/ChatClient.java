@@ -1,16 +1,20 @@
 package de.pitbully;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ChatClient {
     private final String serverName;
     private final int serverPort;
-    private Socket socket
-            ;
+    private Socket socket;
     private InputStream serverIn;
     private OutputStream serverOut;
     private BufferedReader bufferedIn;
+
+    private ArrayList<UserStatusListener> userStatusListener = new ArrayList<>();
 
     public ChatClient(String serverName, int serverPort) {
         this.serverName = serverName;
@@ -19,6 +23,18 @@ public class ChatClient {
 
     public static void main(String[] args) throws IOException {
         ChatClient client = new ChatClient("localhost", 8818);
+        client.addUserStatusListener(new UserStatusListener() {
+            @Override
+            public void online(String login) {
+                System.out.println("ONLINE: " + login);
+            }
+
+            @Override
+            public void offline(String login) {
+                System.out.println("OFFLINE: " + login);
+
+            }
+        });
         if (!client.connect()) {
             System.err.println("connection failed.");
         } else {
@@ -28,6 +44,8 @@ public class ChatClient {
             } else {
                 System.err.println("Login failed");
             }
+
+            client.logoff();
         }
     }
 
@@ -38,9 +56,63 @@ public class ChatClient {
         String response = bufferedIn.readLine();
         System.out.println("Response Line: " + response + System.lineSeparator());
         if ("ok login".equalsIgnoreCase(response)) {
+            startMessageReader();
             return true;
         } else {
             return false;
+        }
+    }
+
+    private void logoff() throws IOException {
+        String cmd = "logoff " + System.lineSeparator();
+        serverOut.write(cmd.getBytes());
+    }
+
+    private void startMessageReader() {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                readMessageLoop();
+            }
+        };
+        t.start();
+    }
+
+    private void readMessageLoop() {
+        try {
+            String line;
+            while ((line = bufferedIn.readLine()) != null) {
+                String[] tokens = StringUtils.split(line);
+                if (tokens != null && tokens.length > 0) {
+                    String cmd = tokens[0];
+                    if("online".equalsIgnoreCase(cmd)) {
+                        handleOnline(tokens);
+                    } else if("offline".equalsIgnoreCase(cmd)) {
+                        handleOffline(tokens);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void handleOffline(String[] tokens) {
+        String login = tokens[1];
+        for(UserStatusListener listener : userStatusListener) {
+            listener.offline(login);
+        }
+    }
+
+    private void handleOnline(String[] tokens) {
+        String login = tokens[1];
+        for(UserStatusListener listener : userStatusListener) {
+            listener.online(login);
         }
     }
 
@@ -57,5 +129,12 @@ public class ChatClient {
         }
 
         return false;
+    }
+
+    public void addUserStatusListener(UserStatusListener listener){
+        userStatusListener.add(listener);
+    }
+    public void removeUserStatusListener(UserStatusListener listener){
+        userStatusListener.remove(listener);
     }
 }

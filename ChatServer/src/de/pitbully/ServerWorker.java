@@ -128,10 +128,11 @@ public class ServerWorker extends Thread{
             String login = tokens[1];
             String password = tokens[2];
             String msg;
-            if (login.equals("guest") && password.equals("guest") || login.equals("jim") && password.equals("jim")) {
+            if (login.equals("guest") && password.equals("guest") || login.equals("yee") && password.equals("yee")) {
                 msg = "ok login" + System.lineSeparator();
                 this.login = login;
                 System.out.println("User logged in successfully: " + login);
+                outputStream.write(msg.getBytes());
 
                 List<ServerWorker> workerList = server.getWorkerList();
 
@@ -155,8 +156,8 @@ public class ServerWorker extends Thread{
             } else {
                 msg = "error login" + System.lineSeparator();
                 System.err.println("Login failed for " + login + System.lineSeparator());
+                outputStream.write(msg.getBytes());
             }
-            outputStream.write(msg.getBytes());
         }
     }
 
