@@ -2,6 +2,7 @@ package de.pitbully;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ public class ServerWorker extends Thread{
     private final Server server;
     private String login = null;
     private OutputStream outputStream;
+    private HashSet<String> topicSet = new HashSet<>();
 
 
     public ServerWorker(Server server, Socket clientSocket) {
@@ -48,6 +50,10 @@ public class ServerWorker extends Thread{
                 } else if ("msg".equalsIgnoreCase(cmd)) {
                     String[] tokensMsg = StringUtils.split(line, null, 3);
                     handleMessage(tokensMsg);
+                } else if("join".equalsIgnoreCase(cmd)) {
+                    handleJoin(tokens);
+                } else if ("leave".equalsIgnoreCase(cmd)) {
+                    handleLeave(tokens);
                 } else {
                     String msg = "unknown " + cmd + System.lineSeparator();
                     outputStream.write(msg.getBytes());
@@ -57,16 +63,44 @@ public class ServerWorker extends Thread{
 
         clientSocket.close();
     }
-    // format: "msg" "login" body...
+
+    private void handleLeave(String[] tokens) {
+        if (tokens.length > 1) {
+            String topic = tokens[1];
+            topicSet.remove(topic);
+        }
+    }
+
+    public boolean isMemberOfTopic(String topic){
+        return topicSet.contains(topic);
+    }
+
+    private void handleJoin(String[] tokens) {
+        if (tokens.length > 1) {
+            String topic = tokens[1];
+            topicSet.add(topic);
+        }
+    }
+
+    // format: "msg" "target" body...
     private void handleMessage(String[] tokens) throws IOException {
         String sendTo = tokens[1];
         String body = tokens[2];
 
+        boolean isTopic = sendTo.charAt(0) == '#';
+
         List<ServerWorker> workerList = server.getWorkerList();
         for(ServerWorker worker : workerList){
-            if (sendTo.equalsIgnoreCase(worker.getLogin())){
-                String outMsg = "msg " + login + " " + body + System.lineSeparator();
-                worker.send(outMsg);
+            if (isTopic) {
+                if (worker.isMemberOfTopic(sendTo)) {
+                    String outMsg = "msg " + sendTo + ": " + login + " " + body + System.lineSeparator();
+                    worker.send(outMsg);
+                }
+            } else {
+                if (sendTo.equalsIgnoreCase(worker.getLogin())) {
+                    String outMsg = "msg " +  login + " " + body + System.lineSeparator();
+                    worker.send(outMsg);
+                }
             }
         }
     }

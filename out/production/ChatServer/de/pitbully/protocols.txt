@@ -9,11 +9,15 @@ User & Server
 
 3. User --> User
     * direct messages
-    * broadcast messages
+    * broadcast messages / group messaging
 
 Commands:
 
     login <user> <password>
     logoff
 
-    msg <user> <body>
+    msg <target> <body>
+
+    join <#topic>
+    leave <#topic>
+        #topic <-- chatroom / group chat
