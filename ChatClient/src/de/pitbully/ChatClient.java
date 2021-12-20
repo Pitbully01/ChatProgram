@@ -37,6 +37,7 @@ public class ChatClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return false;
     }
 }
