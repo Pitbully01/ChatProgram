@@ -1,8 +1,6 @@
 package de.pitbully;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ChatClient {
@@ -12,18 +10,37 @@ public class ChatClient {
             ;
     private InputStream serverIn;
     private OutputStream serverOut;
+    private BufferedReader bufferedIn;
 
     public ChatClient(String serverName, int serverPort) {
         this.serverName = serverName;
         this.serverPort = serverPort;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
         ChatClient client = new ChatClient("localhost", 8818);
         if (!client.connect()) {
             System.err.println("connection failed.");
         } else {
             System.out.println("Connected successfull");
+            if (client.login("guest", "guest")) {
+                System.out.println("Login successful");
+            } else {
+                System.err.println("Login failed");
+            }
+        }
+    }
+
+    private boolean login(String login, String password) throws IOException {
+        String cmd = "login " + login + " " + password + System.lineSeparator();
+        serverOut.write(cmd.getBytes());
+
+        String response = bufferedIn.readLine();
+        System.out.println("Response Line: " + response + System.lineSeparator());
+        if ("ok login".equalsIgnoreCase(response)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -33,6 +50,7 @@ public class ChatClient {
             System.out.println("Client Port is " + socket.getLocalPort());
             this.serverOut = socket.getOutputStream();
             this.serverIn = socket.getInputStream();
+            this.bufferedIn = new BufferedReader(new InputStreamReader(serverIn));
             return true;
         } catch (IOException e) {
             e.printStackTrace();
