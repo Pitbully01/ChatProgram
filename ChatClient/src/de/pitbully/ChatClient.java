@@ -46,7 +46,7 @@ public class ChatClient {
         if (!client.connect()) {
             System.err.println("connection failed.");
         } else {
-            System.out.println("Connected successfull");
+            System.out.println("Connected successful");
             if (client.login("guest", "guest")) {
                 System.out.println("Login successful");
 
