@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class LoginWindow extends JFrame {
@@ -47,12 +49,23 @@ public class LoginWindow extends JFrame {
             if(client.login(login, password)) {
                 // bring up the user list window
                 UserListPane userListPane = new UserListPane(client);
-                JFrame frame = new JFrame("User List");
+                JFrame frame = new JFrame("online as: " + login);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setSize(400, 600);
 
                 frame.getContentPane().add(userListPane, BorderLayout.CENTER);
+                frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        try {
+                            client.logoff();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
 
                 setVisible(false);
             } else {
