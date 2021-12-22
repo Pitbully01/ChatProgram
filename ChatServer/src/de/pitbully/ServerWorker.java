@@ -15,12 +15,13 @@ public class ServerWorker extends Thread{
     private OutputStream outputStream;
     private HashSet<String> topicSet = new HashSet<>();
 
-
+    // Constructor for the worker instance
     public ServerWorker(Server server, Socket clientSocket) {
         this.server = server;
         this.clientSocket = clientSocket;
     }
 
+    // override the "run()" function because its needed for threads
     @Override
     public void run() {
         try {
