@@ -50,7 +50,7 @@ public class LoginWindow extends JFrame {
                 // bring up the user list window
                 UserListPane userListPane = new UserListPane(client);
                 JFrame frame = new JFrame("online as: " + login);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setSize(400, 600);
 
                 frame.getContentPane().add(userListPane, BorderLayout.CENTER);

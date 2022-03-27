@@ -2,8 +2,10 @@ package de.pitbully;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +15,12 @@ public class ServerWorker extends Thread{
     private final Server server;
     private String login = null;
     private OutputStream outputStream;
-    private HashSet<String> topicSet = new HashSet<>();
+    private final HashSet<String> topicSet = new HashSet<>();
+    HashMap<String, String> logins = new HashMap<>();
+    Properties props = new Properties();
+
+
+
 
     // Constructor for the worker instance
     public ServerWorker(Server server, Socket clientSocket) {
@@ -125,11 +132,17 @@ public class ServerWorker extends Thread{
     }
 
     private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
+        props.load(new FileInputStream("logins.properties"));
+        for (String key : props.stringPropertyNames()) {
+            logins.put(key, props.get(key).toString());
+        }
+
+
         if (tokens.length == 3) {
             String login = tokens[1];
             String password = tokens[2];
             String msg;
-            if (login.equals("guest") && password.equals("guest") || login.equals("yee") && password.equals("yee")) {
+            if (logins.containsKey(login) && password.equals(logins.get(login))) {
                 msg = "ok login" + System.lineSeparator();
                 this.login = login;
                 System.out.println("User logged in successfully: " + login);

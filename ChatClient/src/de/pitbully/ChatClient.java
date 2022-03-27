@@ -1,5 +1,6 @@
 package de.pitbully;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -65,6 +66,7 @@ public class ChatClient {
     }
 
     public boolean login(String login, String password) throws IOException {
+        //password = pwToMd5(password);
         String cmd = "login " + login + " " + password + System.lineSeparator();
         serverOut.write(cmd.getBytes());
 
@@ -76,6 +78,11 @@ public class ChatClient {
         } else {
             return false;
         }
+    }
+
+    // encrypts login password with md5 hash
+    public String pwToMd5(String password){
+        return DigestUtils.md5Hex(password).toUpperCase();
     }
 
     public void logoff() throws IOException {
