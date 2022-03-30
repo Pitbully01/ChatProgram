@@ -66,8 +66,9 @@ public class ChatClient {
     }
 
     public boolean login(String login, String password) throws IOException {
-        //password = pwToMd5(password);
-        String cmd = "login " + login + " " + password + System.lineSeparator();
+        String passwordmd5 = pwToMd5(password);
+        System.out.println("you are trying to login with " + login + " and the password: " +passwordmd5);
+        String cmd = "login " + login + " " + passwordmd5 + System.lineSeparator();
         serverOut.write(cmd.getBytes());
 
         String response = bufferedIn.readLine();

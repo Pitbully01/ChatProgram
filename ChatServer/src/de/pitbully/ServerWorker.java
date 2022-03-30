@@ -132,17 +132,14 @@ public class ServerWorker extends Thread{
     }
 
     private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
-        props.load(new FileInputStream("logins.properties"));
-        for (String key : props.stringPropertyNames()) {
-            logins.put(key, props.get(key).toString());
-        }
+        LoginChecker loginChecker = new LoginChecker();
 
 
         if (tokens.length == 3) {
             String login = tokens[1];
             String password = tokens[2];
             String msg;
-            if (logins.containsKey(login) && password.equals(logins.get(login))) {
+            if (loginChecker.checkLogon(login, password)) {
                 msg = "ok login" + System.lineSeparator();
                 this.login = login;
                 System.out.println("User logged in successfully: " + login);
