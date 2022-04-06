@@ -55,6 +55,8 @@ public class ServerWorker extends Thread{
                 if ("logoff".equals(cmd) || "quit".equalsIgnoreCase(cmd)) {
                     handleLogoff();
                     break;
+                } else if("register".equalsIgnoreCase(cmd)) {
+                    handleRegister(outputStream, tokens);
                 } else if ("login".equalsIgnoreCase(cmd)) {
                     handleLogin(outputStream, tokens);
                 } else if ("msg".equalsIgnoreCase(cmd)) {
@@ -64,7 +66,7 @@ public class ServerWorker extends Thread{
                     handleJoin(tokens);
                 } else if ("leave".equalsIgnoreCase(cmd)) {
                     handleLeave(tokens);
-                } else {
+                }  else {
                     String msg = "unknown " + cmd + System.lineSeparator();
                     outputStream.write(msg.getBytes());
                 }
@@ -72,6 +74,22 @@ public class ServerWorker extends Thread{
         }
 
         clientSocket.close();
+    }
+
+    private void handleRegister(OutputStream outputStream2, String[] tokens) {
+        SQLHandler sqlHandler = new SQLHandler();
+
+        if(tokens.length == 4) {
+            String login = tokens[1];
+            String password = tokens[2];
+            String passwordCheck = tokens[3];
+            if(password.equals(passwordCheck)) {
+                sqlHandler.registerlogin(login, password);
+            } else {
+                System.out.println("Err passwords dont match");
+                System.out.println("the passwords are '" + password + "' and '" + passwordCheck + "'");
+            }
+        }
     }
 
     private void handleLeave(String[] tokens) {
@@ -132,14 +150,14 @@ public class ServerWorker extends Thread{
     }
 
     private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
-        LoginChecker loginChecker = new LoginChecker();
+        SQLHandler sqlHandler = new SQLHandler();
 
 
         if (tokens.length == 3) {
             String login = tokens[1];
             String password = tokens[2];
             String msg;
-            if (loginChecker.checkLogon(login, password)) {
+            if (sqlHandler.checkLogon(login, password)) {
                 msg = "ok login" + System.lineSeparator();
                 this.login = login;
                 System.out.println("User logged in successfully: " + login);

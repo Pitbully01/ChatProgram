@@ -8,14 +8,14 @@ import java.io.IOException;
 
 public class MessagePane  extends JPanel implements MessageListener {
 
-    private final ChatClient clients;
+    private final ClientAPI clients;
     private final String logins;
 
     private DefaultListModel<String> listModel = new DefaultListModel<>();
     private JList<String> messageList = new JList<>(listModel);
     private JTextField inputField =new JTextField();
 
-    public MessagePane(ChatClient client, String login) {
+    public MessagePane(ClientAPI client, String login) {
         this.clients = client;
         this.logins = login;
 

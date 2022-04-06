@@ -9,7 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class LoginWindow extends JFrame {
-    private final ChatClient client;
+    private final ClientAPI client;
     JTextField loginField = new JTextField();
     JPasswordField passwordField = new JPasswordField();
     JButton loginButton = new JButton("Login");
@@ -17,7 +17,7 @@ public class LoginWindow extends JFrame {
     public LoginWindow() {
         super("Login");
 
-        this.client = new ChatClient("localhost", 8818);
+        this.client = new ClientAPI("localhost", 8818);
         client.connect();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,7 +50,7 @@ public class LoginWindow extends JFrame {
                 // bring up the user list window
                 UserListPane userListPane = new UserListPane(client);
                 JFrame frame = new JFrame("online as: " + login);
-                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setSize(400, 600);
 
                 frame.getContentPane().add(userListPane, BorderLayout.CENTER);
@@ -64,6 +64,7 @@ public class LoginWindow extends JFrame {
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
+                        System.exit(0);
                     }
                 });
 

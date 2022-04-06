@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class UserListPane extends JPanel implements UserStatusListener {
 
-    private final ChatClient clients;
+    private final ClientAPI clients;
     private JList<String> userListUI;
     private DefaultListModel<String> userListModel;
 
-    public UserListPane(ChatClient client) {
+    public UserListPane(ClientAPI client) {
         this.clients = client;
         this.clients.addUserStatusListener(this);
 
@@ -39,7 +39,7 @@ public class UserListPane extends JPanel implements UserStatusListener {
     }
 
     public static void main(String[] args) {
-        ChatClient client = new ChatClient("localhost", 8818);
+        ClientAPI client = new ClientAPI("localhost", 8818);
 
         UserListPane userListPane = new UserListPane(client);
         JFrame frame = new JFrame("User List");
