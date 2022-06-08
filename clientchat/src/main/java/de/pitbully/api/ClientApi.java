@@ -1,5 +1,5 @@
 package de.pitbully.api;
-
+ 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +45,10 @@ public class ClientApi {
         } else {
             return false;
         }
+    }
+
+    public boolean register(String login, String password){
+        return true;
     }
 
     // encrypts login password with md5 hash

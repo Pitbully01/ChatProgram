@@ -45,7 +45,14 @@ public class RegisterWindow extends JFrame{
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Register");
+                
+                if(passwordField.getText().equals(password2Field.getText())) {
+                    System.out.println("Register");
+                } else {
+                    System.out.println("Err passwords dont match");
+                    System.out.println("the passwords are '" + passwordField.getText() + "' and '" + password2Field.getText() + "'");
+                }
+                
             }
         });
         getContentPane().add(panel);

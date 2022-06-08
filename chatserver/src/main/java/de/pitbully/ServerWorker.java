@@ -82,13 +82,13 @@ public class ServerWorker extends Thread{
         if(tokens.length == 4) {
             String login = tokens[1];
             String password = tokens[2];
-            String passwordCheck = tokens[3];
-            if(password.equals(passwordCheck)) {
+            // String passwordCheck = tokens[3];
+            // if(password.equals(passwordCheck)) {
                 sqlHandler.registerlogin(login, password);
-            } else {
-                System.out.println("Err passwords dont match");
-                System.out.println("the passwords are '" + password + "' and '" + passwordCheck + "'");
-            }
+            // } else {
+            //     System.out.println("Err passwords dont match");
+            //     System.out.println("the passwords are '" + password + "' and '" + passwordCheck + "'");
+            // }
         }
     }
 
